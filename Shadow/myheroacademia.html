@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow😈 - Video Player</title>
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        :root {
+            --primary: #6a3de8;
+            --secondary: #9c3de8;
+            --dark: #121315;
+            --darker: #0a0b0c;
+            --light: #f1f1f1;
+            --gray: #2c2d31;
+            --accent: #ff5e7d;
+            --active: #ff4d6a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        /* ===== HEADER STYLES ===== */
+        header {
+            background-color: var(--dark);
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light);
+            text-decoration: none;
+            font-family:algerian,courier;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ===== VIDEO PLAYER SECTION ===== */
+        .video-container {
+            position: relative;
+            width: 100%;
+            background-color: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+        }
+
+        #mainPlayer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .video-controls {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .video-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* ===== AUTOPLAY TOGGLE ===== */
+        .autoplay-container {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray);
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* ===== SEASONS & EPISODES SECTION ===== */
+        .seasons-container {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.3rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .seasons-tabs {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .season-tab {
+            padding: 0.6rem 1.2rem;
+            background-color: var(--gray);
+            border: none;
+            border-radius: 4px;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .season-tab.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .episodes-container {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+
+        .episodes-container.active {
+            display: grid;
+        }
+
+        .episode-button {
+            padding: 0.6rem;
+            background-color: var(--gray);
+            border: none;
+            border-radius: 4px;
+            color: var(--light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .episode-button:hover {
+            background-color: #3e3f45;
+        }
+
+        .episode-button.active {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        /* ===== RECOMMENDED ANIME SECTION ===== */
+        .recommendations-container {
+            margin-bottom: 2rem;
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .anime-card {
+            background-color: var(--dark);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .anime-thumbnail {
+            position: relative;
+            padding-top: 140%; /* Aspect ratio */
+            overflow: hidden;
+        }
+
+        .anime-thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .anime-card:hover .anime-thumbnail img {
+            transform: scale(1.1);
+        }
+
+        .anime-info {
+            padding: 1rem;
+        }
+
+        .anime-title {
+            font-size: 1rem;
+            font-weight: 600;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ===== FOOTER STYLES ===== */
+        footer {
+            background-color: var(--dark);
+            padding: 1.5rem 1rem;
+            margin-top: auto;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .copyright {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .anime-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+
+            .episodes-container {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+
+        @media (max-width: 480px) {
+            .anime-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .episodes-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .seasons-tabs {
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                flex-wrap: nowrap;
+            }
+
+            .season-tab {
+                flex: 0 0 auto;
+            }
+        }
+
+        /* ===== AD CONTAINER STYLES ===== */
+        .ad-container {
+            width: 80%;
+            max-width: 728px;
+            margin: 1rem auto;
+            text-align: center;
+            min-height: 60px;
+            background: var(--dark);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .sidebar-ad {
+            position: sticky;
+            top: 100px;
+            width: 250px;
+            min-height: 400px;
+            margin-left: 1rem;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .main-content {
+            flex: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            .sidebar-ad {
+                width: 100%;
+                max-width: 728px;
+                min-height: 200px;
+                margin: 1rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <div class="container header-container">
+            <a href="index.html" class="logo">Shadow</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <div class="content-wrapper">
+            <div class="main-content">
+                <!-- Video Player Section -->
+                <section class="video-section">
+                    <h2 class="video-title">Tokyo Revengers - Season 1 Episode 1</h2>
+                    <div class="video-container">
+                        <div class="video-wrapper">
+                            <video id="mainPlayer" controls>
+                                <source src="https://mwvfkrjcbfbqxqpbkzgc.supabase.co/storage/v1/object/public/anime-videos/MHA_S1_E1.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                        <div class="video-controls">
+                            <div class="autoplay-container">
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="autoplayToggle" checked>
+                                    <span class="slider"></span>
+                                </label>
+                                <span>Autoplay Next</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seasons & Episodes Section -->
+                    <div class="seasons-container">
+                        <h3 class="section-title">Seasons & Episodes</h3>
+                        
+                        <div class="seasons-tabs" id="seasonsTabs">
+                            <!-- Season tabs will be generated here -->
+                        </div>
+                        
+                        <div id="episodesContainer">
+                            <!-- Episode lists will be generated here -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Recommended Anime Section -->
+                <section class="recommendations-container">
+                    <h3 class="section-title">Recommended Anime</h3>
+                    
+                    <div class="anime-grid">
+                        <!-- Demon Slayer -->
+                        <div class="anime-card">
+                            <div class="anime-thumbnail">
+                                <img src="https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/DS.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL0RTLndlYnAiLCJpYXQiOjE3NDk5NzMwNDgsImV4cCI6MTc4MTUwOTA0OH0.Vj0Xjq6ObQi6wtLf-2LhQoODzB1a0DqNPMMVMdTUcXM" alt="Demon Slayer" onclick="document.location='demon-slayer.html'">
+                            </div>
+                            <div class="anime-info">
+                                <h4 class="anime-title">Demon Slayer: Kimetsu no Yaiba</h4>
+                            </div>
+                        </div>
+
+                        <!-- Attack on Titan -->
+                        <div class="anime-card">
+                            <div class="anime-thumbnail">
+                                <img src="https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/AOT.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL0FPVC53ZWJwIiwiaWF0IjoxNzQ5OTcyNjU0LCJleHAiOjE3ODE1MDg2NTR9.wkKrPwht__IXN6uJ1E3KMFNQddYsiCUYNM70lPqtk2g" alt="Attack on Titan" onclick="document.location='attackontitan.html'">
+                            </div>
+                            <div class="anime-info">
+                                <h4 class="anime-title">Attack on Titan</h4>
+                            </div>
+                        </div>
+
+                        <!-- Tokyo Revengers -->
+                        <div class="anime-card">
+                            <div class="anime-thumbnail">
+                                <img src="https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/TR.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL1RSLndlYnAiLCJpYXQiOjE3NDk5NzM3ODAsImV4cCI6MTc4MTUwOTc4MH0.Zj6OaGgdno3L0DG5hXPWfoWkT6gZzOr3FpGAtdIaLNk" alt="Tokyo Revengers" onclick="document.location='tokyorevengers.html'">
+                            </div>
+                            <div class="anime-info">
+                                <h4 class="anime-title">Tokyo Revengers</h4>
+                            </div>
+                        </div>
+
+                        <!-- Spy x Family -->
+                        <div class="anime-card">
+                            <div class="anime-thumbnail">
+                                <img src="https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/SxF.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL1N4Ri53ZWJwIiwiaWF0IjoxNzQ5OTczOTU0LCJleHAiOjE3ODE1MDk5NTR9.OC_9yP2rcD_rH_dDKTGe9OpXZE4uO5ZH0SHzPzdJmaY" alt="Spy x Family" onclick="document.location='spyxfamily.html'">
+                            </div>
+                            <div class="anime-info">
+                                <h4 class="anime-title">Spy x Family</h4>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- In-Content Ad -->
+                <div class="ad-container">
+                    <ins class="adsbygoogle"
+                         style="display:block"
+                         data-ad-client="ca-app-pub-5597020725008529~9378310887"
+                         data-ad-slot="ca-app-pub-5597020725008529/3949874325"
+                         data-ad-format="auto"
+                         data-full-width-responsive="true"></ins>
+                </div>
+            </div>
+
+            <!-- Sidebar Ad -->
+            <div class="sidebar-ad">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-app-pub-5597020725008529~9378310887"
+                     data-ad-slot="ca-app-pub-5597020725008529/3949874325"
+                     data-ad-format="vertical"
+                     data-full-width-responsive="true"></ins>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <p class="copyright">© 2025 HiAnime Clone. All rights reserved. This is a demo project.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Video player and episode data setup
+        const animeData = {
+            title: "Tokyo Revengers",
+            seasons: [
+                {
+                    seasonNum: 1,
+                    episodes: 24
+                },
+                {
+                    seasonNum: 2,
+                    episodes: 10
+                },
+                {
+                    seasonNum: 3,
+                    episodes: 8
+                }
+            ]
+        };
+
+        // DOM Elements
+        const mainPlayer = document.getElementById('mainPlayer');
+        const videoTitle = document.querySelector('.video-title');
+        const autoplayToggle = document.getElementById('autoplayToggle');
+        const seasonsTabs = document.getElementById('seasonsTabs');
+        const episodesContainer = document.getElementById('episodesContainer');
+
+        // Current state variables
+        let currentSeason = 1;
+        let currentEpisode = 1;
+        let isAutoplayEnabled = true;
+
+        // Initialize the page
+        function initPage() {
+            // Generate season tabs
+            generateSeasonTabs();
+            
+            // Generate episode lists for all seasons
+            animeData.seasons.forEach(season => {
+                generateEpisodesList(season.seasonNum, season.episodes);
+            });
+            
+            // Set active season tab and episode list
+            setActiveSeason(currentSeason);
+            
+            // Set initial video source
+            updateVideoSource(currentSeason, currentEpisode);
+            
+            // Set autoplay toggle initial state
+            autoplayToggle.checked = isAutoplayEnabled;
+            
+            // Add event listener for autoplay toggle
+            autoplayToggle.addEventListener('change', () => {
+                isAutoplayEnabled = autoplayToggle.checked;
+            });
+            
+            // Add event listener for video ended
+            mainPlayer.addEventListener('ended', handleVideoEnded);
+        }
+
+        // Generate season tabs
+        function generateSeasonTabs() {
+            animeData.seasons.forEach(season => {
+                const seasonTab = document.createElement('button');
+                seasonTab.className = 'season-tab';
+                seasonTab.textContent = `Season ${season.seasonNum}`;
+                seasonTab.dataset.season = season.seasonNum;
+                
+                seasonTab.addEventListener('click', () => {
+                    setActiveSeason(season.seasonNum);
+                });
+                
+                seasonsTabs.appendChild(seasonTab);
+            });
+        }
+
+        // Generate episodes list for a season
+        function generateEpisodesList(seasonNum, episodeCount) {
+            const episodesList = document.createElement('div');
+            episodesList.className = 'episodes-container';
+            episodesList.id = `season-${seasonNum}-episodes`;
+            
+            for (let i = 1; i <= episodeCount; i++) {
+                const episodeButton = document.createElement('button');
+                episodeButton.className = 'episode-button';
+                episodeButton.textContent = `Episode ${i}`;
+                episodeButton.dataset.season = seasonNum;
+                episodeButton.dataset.episode = i;
+                
+                episodeButton.addEventListener('click', () => {
+                    currentSeason = parseInt(episodeButton.dataset.season);
+                    currentEpisode = parseInt(episodeButton.dataset.episode);
+                    updateVideoSource(currentSeason, currentEpisode);
+                    updateActiveEpisode();
+                });
+                
+                episodesList.appendChild(episodeButton);
+            }
+            
+            episodesContainer.appendChild(episodesList);
+        }
+
+        // Set active season
+        function setActiveSeason(seasonNum) {
+            // Update active season tab
+            const seasonTabs = document.querySelectorAll('.season-tab');
+            seasonTabs.forEach(tab => {
+                if (parseInt(tab.dataset.season) === seasonNum) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Show active season episodes
+            const episodeLists = document.querySelectorAll('.episodes-container');
+            episodeLists.forEach(list => {
+                if (list.id === `season-${seasonNum}-episodes`) {
+                    list.classList.add('active');
+                } else {
+                    list.classList.remove('active');
+                }
+            });
+            
+            // Update current season
+            currentSeason = seasonNum;
+        }
+
+        // Update video source
+        function updateVideoSource(season, episode) {
+            // Update video source
+            const videoSrc = `https://mwvfkrjcbfbqxqpbkzgc.supabase.co/storage/v1/object/public/anime-videos/MHA_S${season}_E${episode}.mp4`;
+            mainPlayer.src = videoSrc;
+            mainPlayer.load();
+            mainPlayer.play().catch(error => {
+                console.log('Auto-play prevented:', error);
+            });
+            
+            // Update video title
+            videoTitle.textContent = `${animeData.title} - Season ${season} Episode ${episode}`;
+            
+            // Update active episode button
+            updateActiveEpisode();
+        }
+
+        // Update active episode button
+        function updateActiveEpisode() {
+            const episodeButtons = document.querySelectorAll('.episode-button');
+            episodeButtons.forEach(button => {
+                const buttonSeason = parseInt(button.dataset.season);
+                const buttonEpisode = parseInt(button.dataset.episode);
+                
+                if (buttonSeason === currentSeason && buttonEpisode === currentEpisode) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+        }
+
+        // Handle video ended event (for autoplay)
+        function handleVideoEnded() {
+            if (!isAutoplayEnabled) return;
+            
+            // Find current season object
+            const currentSeasonObj = animeData.seasons.find(s => s.seasonNum === currentSeason);
+            
+            if (currentEpisode < currentSeasonObj.episodes) {
+                // Play next episode in current season
+                currentEpisode++;
+            } else {
+                // Check if there's a next season
+                const nextSeasonObj = animeData.seasons.find(s => s.seasonNum === currentSeason + 1);
+                
+                if (nextSeasonObj) {
+                    // Go to first episode of next season
+                    currentSeason++;
+                    currentEpisode = 1;
+                    setActiveSeason(currentSeason);
+                } else {
+                    // End of all episodes
+                    console.log('Reached the end of all episodes');
+                    return;
+                }
+            }
+            
+            // Update video source
+            updateVideoSource(currentSeason, currentEpisode);
+        }
+
+        // Initialize the page when DOM content is loaded
+        document.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+</html>

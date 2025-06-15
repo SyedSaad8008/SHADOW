@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shadow😈 - Your Anime Destination</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        body {
+            background-color: #0a0a0a;
+            color: #ffffff;
+            min-height: 100vh;
+        }
+
+        .hero {
+            position: relative;
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            background-image: url('https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/bg.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL2JnLndlYnAiLCJpYXQiOjE3NDk5NzE5NzUsImV4cCI6MTc4MTUwNzk3NX0.-sz2SrOPjhph2-FoQUhW15ZNysuqxFyBzi9FpijWhVE');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .logo {
+            font-size: 5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            font-family:algerian,courier;
+            letter-spacing: 2px;
+            background: linear-gradient(45deg, #FF6B6B, #4472CA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0px 0px 10px rgba(255, 107, 107, 0.3);
+        }
+
+        .watch-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(45deg, #FF6B6B, #4472CA);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .watch-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.6);
+        }
+
+        .watch-btn i {
+            margin-right: 10px;
+        }
+
+        .social-share {
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            z-index: 2;
+        }
+
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .social-btn:hover {
+            transform: translateY(-5px);
+        }
+
+        .facebook {
+            background: #3b5998;
+        }
+
+        .twitter {
+            background: #1da1f2;
+        }
+
+        .reddit {
+            background: #ff4500;
+        }
+
+        .whatsapp {
+            background: #25d366;
+        }
+
+        .navigation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            background: linear-gradient(45deg, #FF6B6B, #4472CA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #FF6B6B;
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 3rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: block;
+            }
+
+            .social-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+
+            .social-share {
+                bottom: 30px;
+            }
+
+            .watch-btn {
+                padding: 12px 25px;
+                font-size: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+
+            .social-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+        }
+
+        .mobile-menu {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 70%;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            transition: all 0.5s ease;
+        }
+
+        .mobile-menu.active {
+            right: 0;
+        }
+
+        .mobile-menu .nav-link {
+            font-size: 1.3rem;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navigation">
+        <div class="nav-logo">Shadow</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="#" class="nav-link">Anime</a>
+            <a href="#" class="nav-link">Movies</a>
+            <a href="Popular.html" class="nav-link">Popular</a>
+            <a href="#" class="nav-link">About</a>
+        </div>
+        <button class="hamburger">
+            <i class="fas fa-bars"></i>
+        </button>
+    </nav>
+
+    <div class="mobile-menu">
+        <button class="close-menu">
+            <i class="fas fa-times"></i>
+        </button>
+        <a href="#" class="nav-link">Home</a>
+        <a href="#" class="nav-link">Anime</a>
+        <a href="#" class="nav-link">Movies</a>
+        <a href="#" class="nav-link">Popular</a>
+        <a href="#" class="nav-link">About</a>
+    </div>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="logo">Shadow</h1>
+            <button class="watch-btn" onclick="document.location='Popular.html'">
+                <i class="fas fa-play"></i> Watch Anime
+            </button>
+        </div>
+        <div class="social-share">
+            <a class="social-btn facebook" id="facebook-share">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a class="social-btn twitter" id="twitter-share">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a class="social-btn reddit" id="reddit-share">
+                <i class="fab fa-reddit-alien"></i>
+            </a>
+            <a class="social-btn whatsapp" id="whatsapp-share">
+                <i class="fab fa-whatsapp"></i>
+            </a>
+        </div>
+    </section>
+
+    <script>
+        // Mobile menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const closeMenu = document.querySelector('.close-menu');
+
+        hamburger.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+
+        closeMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+
+        // Share functionality
+        const pageUrl = window.location.href;
+        const pageTitle = document.title;
+
+        // Facebook share
+        document.getElementById('facebook-share').addEventListener('click', function() {
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`, 'facebook-share-dialog', 'width=626,height=436');
+        });
+
+        // Twitter share
+        document.getElementById('twitter-share').addEventListener('click', function() {
+            window.open(`https://twitter.com/intent/tweet?url=${pageUrl}&text=${pageTitle}`, 'twitter-share-dialog', 'width=626,height=436');
+        });
+
+        // Reddit share
+        document.getElementById('reddit-share').addEventListener('click', function() {
+            window.open(`https://www.reddit.com/submit?url=${pageUrl}&title=${pageTitle}`, 'reddit-share-dialog', 'width=900,height=600');
+        });
+
+        // WhatsApp share
+        document.getElementById('whatsapp-share').addEventListener('click', function() {
+            window.open(`https://api.whatsapp.com/send?text=${pageTitle} ${pageUrl}`, 'whatsapp-share-dialog', 'width=626,height=436');
+        });
+    </script>
+</body>
+</html>

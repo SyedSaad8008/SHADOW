@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiAnime Clone</title>
+    <style>
+        /* Global Styles */
+        :root {
+            --primary: #6a3de8;
+            --secondary: #9c3de8;
+            --dark: #121315;
+            --darker: #0a0b0c;
+            --light: #f1f1f1;
+            --gray: #2c2d31;
+            --accent: #ff5e7d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--darker);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: var(--dark);
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--light);
+            text-decoration: none;
+            font-family:algerian,courier;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            transition: transform 0.3s;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .search-container {
+            flex: 1;
+            max-width: 500px;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border-radius: 50px;
+            border: none;
+            background-color: var(--gray);
+            color: var(--light);
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .search-bar:focus {
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .nav-button {
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            color: var(--light);
+            font-weight: 500;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-button::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s ease, left 0.3s ease;
+        }
+
+        .nav-button:hover::after {
+            width: 100%;
+            left: 0;
+        }
+
+        .nav-button:hover {
+            color: var(--primary);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 0.5rem;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .anime-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .anime-card {
+            background-color: var(--dark);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .anime-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .anime-thumbnail {
+            position: relative;
+            padding-top: 150%; /* Aspect ratio 2:3 */
+            overflow: hidden;
+        }
+
+        .anime-thumbnail img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .anime-card:hover .anime-thumbnail img {
+            transform: scale(1.1);
+        }
+
+        .anime-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+            padding: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .anime-card:hover .anime-overlay {
+            opacity: 1;
+        }
+
+        .watch-now {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .watch-now:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(106, 61, 232, 0.7);
+        }
+
+        .anime-info {
+            padding: 1rem;
+        }
+
+        .anime-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .anime-genres {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .genre-badge {
+            background-color: var(--gray);
+            color: var(--light);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+        }
+
+        .anime-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            color: #ffc107;
+            font-size: 0.9rem;
+        }
+
+        /* No results message */
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: var(--light);
+            font-size: 1.2rem;
+            grid-column: 1 / -1;
+            display: none;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--dark);
+            padding: 2rem 1rem;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--primary);
+        }
+
+        .copyright {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .nav-links {
+                overflow-x: auto;
+                padding-bottom: 0.5rem;
+                margin-top: 0.5rem;
+            }
+
+            .anime-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="header-container">
+            <a href="#" class="logo">Shadow</a>
+            <div class="search-container">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchBar" class="search-bar" placeholder="Search anime...">
+            </div>
+            <nav class="nav-links">
+                <a href="index.html" class="nav-button">Home</a>
+                <a href="Popular.html" class="nav-button">Popular</a>
+                <a href="Genres.html" class="nav-button">Genres</a>
+                <a href="New.html" class="nav-button">New</a>
+                <a href="Movies.html" class="nav-button">Movies</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <h2 class="section-title">Popular Anime</h2>
+        <div class="anime-grid" id="animeGrid">
+            <!-- Anime cards will be generated here -->
+        </div>
+        <div class="no-results" id="noResults">No results found for your search.</div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="#" class="footer-link">About Us</a>
+                <a href="#" class="footer-link">Privacy Policy</a>
+                <a href="#" class="footer-link">Terms of Service</a>
+                <a href="#" class="footer-link">Contact</a>
+                <a href="#" class="footer-link">DMCA</a>
+            </div>
+            <p class="copyright">© 2025 HiAnime Clone. All rights reserved. This is a demo project.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Anime data
+        const pageLinks = {
+            "Spy x Family": "spyxfamily.html",
+            "Chainsaw Man": "chainsawman.html",
+            "Tokyo Revengers": "tokyorevengers.html",
+            "Demon Slayer: Kimetsu no Yaiba": "demon-slayer.html",
+            "Attack on Titan": "attackontitan.html",
+            "My Hero Academia": "myheroacademia.html",
+            "Jujutsu Kaisen": "jujutsukaisen.html",
+            "One Piece": "onepiece.html",
+            "Black Clover": "blackclover.html",
+            "Re-Zero": "rezero.html",
+            "Naruto": "naruto.html",
+        };
+
+        const animeData = [
+            {
+                title: "Demon Slayer: Kimetsu no Yaiba",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/DS.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL0RTLndlYnAiLCJpYXQiOjE3NDk5NzMwNDgsImV4cCI6MTc4MTUwOTA0OH0.Vj0Xjq6ObQi6wtLf-2LhQoODzB1a0DqNPMMVMdTUcXM",
+                genres: ["Action", "Fantasy", "Supernatural"],
+                rating: 4.9
+            },
+            {
+                title: "Attack on Titan",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/AOT.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL0FPVC53ZWJwIiwiaWF0IjoxNzQ5OTcyNjU0LCJleHAiOjE3ODE1MDg2NTR9.wkKrPwht__IXN6uJ1E3KMFNQddYsiCUYNM70lPqtk2g",
+                genres: ["Action", "Dark Fantasy", "Post-Apocalyptic"],
+                rating: 4.9
+            },
+            {
+                title: "My Hero Academia",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/MHA.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL01IQS53ZWJwIiwiaWF0IjoxNzQ5OTczNjM5LCJleHAiOjE3ODE1MDk2Mzl9.7jriCh2o5FkOacjxXQajKOn8LFnkgRo3QcdK-e5JSq8",
+                genres: ["Action", "Superhero", "School"],
+                rating: 4.5
+            },
+            {
+                title: "Jujutsu Kaisen",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/JK.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL0pLLndlYnAiLCJpYXQiOjE3NDk5NzM1MzMsImV4cCI6MTc4MTUwOTUzM30.eYPgYKZxTIkIGyNyqkI2bxAPZ1wSzbpIBZwtrF2CtqU",
+                genres: ["Dark Fantasy", "Supernatural"],
+                rating: 4.6
+            },
+            {
+                title: "One Piece",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/OP.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL09QLndlYnAiLCJpYXQiOjE3NDk5NzM2OTIsImV4cCI6MTc4MTUwOTY5Mn0.BWuYHIomUUjjNmA3G8JtMPEkFJFxdP5WLvcSMpZnmjI",
+                genres: ["Adventure", "Fantasy", "Comedy"],
+                rating: 4.2
+            },
+            {
+                title: "Spy x Family",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/SxF.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL1N4Ri53ZWJwIiwiaWF0IjoxNzQ5OTczOTU0LCJleHAiOjE3ODE1MDk5NTR9.OC_9yP2rcD_rH_dDKTGe9OpXZE4uO5ZH0SHzPzdJmaY",
+                genres: ["Action", "Comedy", "Slice of Life"],
+                rating: 4.7
+            },
+            {
+                title: "Chainsaw Man",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/CM.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL0NNLndlYnAiLCJpYXQiOjE3NDk5NzI3MjAsImV4cCI6MTc4MTUwODcyMH0.qpcKf_4TgHMrDF1_7K4aNMXohgKNsavWtID7wqxGSso",
+                genres: ["Action", "Dark Fantasy", "Horror"],
+                rating: 4.3
+            },
+            {
+                title: "Tokyo Revengers",
+                image: "https://worevvigdwfptxeocgga.supabase.co/storage/v1/object/sign/anime-episodes-1/TR.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iODE0NzhiOC1mMWM0LTQ2YjEtODE4MS1mYzlmZjlkYTRkODUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhbmltZS1lcGlzb2Rlcy0xL1RSLndlYnAiLCJpYXQiOjE3NDk5NzM3ODAsImV4cCI6MTc4MTUwOTc4MH0.Zj6OaGgdno3L0DG5hXPWfoWkT6gZzOr3FpGAtdIaLNk",
+                genres: ["Action", "Drama", "Time Travel"],
+                rating: 5.0
+            },
+            {
+                title: "Black Clover",
+                image: "/Assets/BC.webp",
+                genres: ["Action", "Drama", "Time Travel"],
+                rating: 5.0
+            },
+            {
+                title: "Re-Zero",
+                image: "/Assets/RE.webp",
+                genres: ["Action", "Drama", "Time Travel"],
+                rating: 5.0
+            },
+            {
+                title: "Naruto",
+                image: "/Assets/N.webp",
+                genres: ["Action", "Drama", "Time Travel"],
+                rating: 5.0
+            }
+        ];
+
+        // DOM Elements
+        const animeGrid = document.getElementById('animeGrid');
+        const searchBar = document.getElementById('searchBar');
+        const noResults = document.getElementById('noResults');
+
+        // Initialize the anime grid
+        function initAnimeGrid() {
+            animeGrid.innerHTML = '';
+            
+            animeData.forEach(anime => {
+                const animeCard = createAnimeCard(anime);
+                animeGrid.appendChild(animeCard);
+            });
+        }
+
+        // Create anime card element
+        function createAnimeCard(anime) {
+            const card = document.createElement('div');
+            card.className = 'anime-card';
+            
+            const genresHTML = anime.genres.map(genre => 
+                `<span class="genre-badge">${genre}</span>`
+            ).join('');
+            
+            card.innerHTML = `
+              <div class="anime-thumbnail">
+                <img src="${anime.image}" alt="${anime.title}">
+                <div class="anime-overlay">
+                  <a href="${pageLinks[anime.title]}">
+                    <button class="watch-now">Watch Now</button>
+                  </a>
+                </div>
+              </div>
+              <div class="anime-info">
+                <h3 class="anime-title">${anime.title}</h3>
+                <div class="anime-genres">
+                  ${genresHTML}
+                </div>
+                <div class="anime-rating">
+                  ⭐ ${anime.rating}
+                </div>
+              </div>
+            `;
+
+            
+            return card;
+        }
+
+        // Search functionality
+        searchBar.addEventListener('input', () => {
+            const searchTerm = searchBar.value.toLowerCase().trim();
+            const filteredAnime = animeData.filter(anime => 
+                anime.title.toLowerCase().includes(searchTerm)
+            );
+            
+            animeGrid.innerHTML = '';
+            
+            if (filteredAnime.length === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+                filteredAnime.forEach(anime => {
+                    const animeCard = createAnimeCard(anime);
+                    animeGrid.appendChild(animeCard);
+                });
+            }
+        });
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', () => {
+            initAnimeGrid();
+        });
+    </script>
+</body>
+</html>
