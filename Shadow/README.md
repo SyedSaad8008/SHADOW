@@ -1,7 +1,5 @@
 # Shadow - Anime Streaming Platform
 
-![Shadow Anime Demo](https://684e8087c1f524bf9a7aa69b--dainty-sawine-8523b5.netlify.app/popular)
-
 ## 🏆 Award-Winning Anime Streaming Experience
 
 Shadow is a sleek, modern anime streaming platform designed to provide fans with seamless access to their favorite anime series. Built with performance and user experience in mind, Shadow offers a beautiful interface that adapts to any device.
